@@ -83,3 +83,63 @@ class kallisto_bustools():
                 kb_ref.append(gtf)
         #return kb_ref
         subprocess.run(kb_ref, check=True)
+
+    def initialize_sample_table(self):
+        pass
+
+    def kb_list(self):
+        '''Prints available technologies vor mapping'''
+        kb_list = ['kb', '--list']
+        subprocess.run(kb_list)
+
+    def kb_count(
+            self,
+            sample_path: str,
+            x: str,
+            workflow: str = 'standard',
+            h5ad: bool = True,
+            mm: bool = False,
+    ):
+        '''Runs the kb count command'''
+        possible_x = [
+            '10XV1',
+            '10XV2',
+            '10XV3',
+            '10XV3_ULTIMA',
+            'BDWTA',
+            'BULK',
+            'CELSEQ',
+            'CELSEQ2',
+            'DROPSEQ',
+            'INDROPSV1',
+            'INDROPSV2',
+            'INDROPSV3',
+            'SCRUBSEQ',
+            'SMARTSEQ2',
+            'SMARTSEQ3',
+            'SPLIT-SEQ',
+            'STORMSEQ',
+            'SURECELL',
+            'Visium',
+        ]
+        possible_workflow = [
+            'standard',
+            'lamanno',
+            'nucleus',
+            'kite',
+            'kite:10xFB'
+        ]
+        if x not in possible_x:
+            raise ValueError(f'x must be one of {possible_x}')
+        if workflow not in possible_workflow:
+            raise ValueError(f'workflow must be one of {possible_workflow}')
+
+        kb_count = [
+            'kb', 'count',
+            '-i', os.path.join(self.index_output, 'transcriptome.idx'),
+            '-g', os.path.join(self.index_output, 'transcripts_to_genes.txt'),
+            '--tmp', os.path.join(sample_path, 'tmp'),
+            '-x', x,
+            '-o', sample_path
+        ]
+        return kb_count
